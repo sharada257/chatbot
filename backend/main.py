@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import google.generativeai as genai
 import os
 
-genai.configure(api_key="your_gemini_api_key")
+genai.configure(api_key="api_key")
 
 model = genai.GenerativeModel("gemini-2.0-flash")
 chat = model.start_chat()
