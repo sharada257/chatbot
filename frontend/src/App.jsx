@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState, useRef, useEffect } from "react";
 
 const ChatEasy = () => {
@@ -31,17 +32,14 @@ const ChatEasy = () => {
     setInput("");
     setLoading(true);
 
-    // Simulate API delay
-    setTimeout(() => {
-      // Add bot response
-      const botMessage = {
-        role: "bot",
-        content:
-          "Thank you for your message! This is a demo of the ChatEasy interface. In a real implementation, this would connect to your backend API.",
-      };
-      setMessages((prev) => [...prev, botMessage]);
-      setLoading(false);
-    }, 1000);
+    // Send message to backend
+    const res = await axios.post("http://localhost:8000/chat", {
+      message: input,
+    });
+
+    // Add bot reply from backend
+    const botMessage = { role: "bot", content: res.data.response };
+    setMessages((prev) => [...prev, botMessage]);
   };
 
   // Handle Enter key press
@@ -58,7 +56,7 @@ const ChatEasy = () => {
         <div className="flex items-center">
           <div className="text-white font-bold text-xl">ChatEasy</div>
         </div>
-        <button type="button"  className="bg-white text-blue-600 px-4 py-2 rounded-md font-medium text-sm">
+        <button type="button" className="bg-white text-blue-600 px-4 py-2 rounded-md font-medium text-sm">
           Start Free Trial
         </button>
       </header>
@@ -72,9 +70,8 @@ const ChatEasy = () => {
             {messages.map((msg, index) => (
               <div
                 key={index}
-                className={`flex mb-4 ${
-                  msg.role === "user" ? "justify-end" : "justify-start"
-                }`}
+                className={`flex mb-4 ${msg.role === "user" ? "justify-end" : "justify-start"
+                  }`}
               >
                 {msg.role === "bot" && (
                   <div className="flex-shrink-0 h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center mr-2">
@@ -82,11 +79,10 @@ const ChatEasy = () => {
                   </div>
                 )}
                 <div
-                  className={`px-4 py-3 rounded-lg max-w-xs sm:max-w-md md:max-w-lg ${
-                    msg.role === "user"
+                  className={`px-4 py-3 rounded-lg max-w-xs sm:max-w-md md:max-w-lg ${msg.role === "user"
                       ? "bg-blue-600 text-white rounded-br-none"
                       : "bg-gray-100 text-gray-800 rounded-bl-none"
-                  }`}
+                    }`}
                 >
                   {msg.content}
                 </div>
@@ -132,14 +128,13 @@ const ChatEasy = () => {
                 placeholder="Type a message..."
               />
               <button
-              type="button" 
+                type="button"
                 onClick={sendMessage}
                 disabled={!input.trim()}
-                className={`bg-blue-600 text-white px-4 py-2 rounded-r-lg ${
-                  !input.trim()
+                className={`bg-blue-600 text-white px-4 py-2 rounded-r-lg ${!input.trim()
                     ? "opacity-50 cursor-not-allowed"
                     : "hover:bg-blue-700"
-                }`}
+                  }`}
               >
                 Send
               </button>
